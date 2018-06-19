@@ -1,0 +1,43 @@
+
+package main
+
+import "fmt"
+
+type Req::[#T] func() (#T, error)
+
+func Concurrently::[#T](actions []Req::[#T]) ([]#T, error) {
+    out := make([]#T, len(actions))
+    errs := make(chan error, len(actions))
+    answers := make(chan struct{}, len(actions))
+    for i := range actions {
+        go func(i int) {
+            ans, err := actions[i]()
+            if err != nil {
+                errs <- err
+            } else {
+                out[i] = ans
+                answers <- struct{}{}
+            }
+        }(i)
+    }
+    for range out {
+        select {
+        case <-answers:
+        case err := <-errs:
+            return nil, err
+        }
+    }
+    return out, nil
+}
+
+func main() {
+    actions := []Req::[int]{
+        func() (int, error) { return 2, nil },
+        func() (int, error) { return 7, nil },
+        func() (int, error) { return 3, nil },
+        func() (int, error) { return 8, nil },
+    }
+
+    out, err := Concurrently::[int](actions)
+    fmt.Printf("%+v, %+v\n", out, err)
+}
