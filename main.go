@@ -147,12 +147,12 @@ func main() {
 		return
 	}
 
-	fileSrc := string(args[2])
+	fileSrc := string(os.Args[2])
 	if !strings.HasSuffix(fileSrc, ".filo") {
 		fmt.Printf("Expected invocation 'filo gen [path/src.filo]'.\n")
 		return
 	}
-	fileTrg = string(fileSrc[:len(fileSrc)-4]) + "go"
+	fileTrg := string(fileSrc[:len(fileSrc)-4]) + "go"
 
 	src, err := ioutil.ReadFile(fileSrc)
 	if err != nil {
