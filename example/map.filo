@@ -1,0 +1,26 @@
+package main
+
+import "fmt"
+import "strconv"
+
+func Map::[#A, #B](xs []#A, f func(#A)#B) []#B {
+  ys := []#B{}
+  for _, x := range xs {
+    ys = append(ys, f(x))
+  }
+  return ys
+}
+
+func transform(x int) string {
+  return fmt.Sprintf("!%d!", x)
+}
+
+func main() {
+  list := []int{1, 2, 3, 4}
+  
+  mapped := Map::[int, string](list, func(x int) string {
+    return strconv.Itoa(x) + " = " + strconv.Itoa(x)
+  })
+
+  fmt.Printf("%+v\n", mapped)
+}
